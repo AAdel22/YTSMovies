@@ -14,18 +14,9 @@ class ActorTableViewCell: UITableViewCell {
     @IBOutlet weak var actorNameLabel: UILabel!
     @IBOutlet weak var actorCharacterLabel: UILabel!
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        
-    }
 
     func cellDesign(){
         self.actorImageView.layer.cornerRadius = self.actorImageView.frame.width / 2
         self.actorImageView.layer.masksToBounds = true
     }
-    
-    func configure() {
-        
-    }
-
 }

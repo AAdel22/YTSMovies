@@ -17,5 +17,5 @@ class MovieList {
     var rate: Float?
     var genres : [String]?
     
-    
+    var moviesCount: Int?
 }

@@ -12,9 +12,6 @@ import SwiftyJSON
 
 class Api: NSObject {
     
-//    var data: MovieDetails!
-    
-    
     class func allMovies(page: Int,completion: @escaping (_ error: Error?, _ movies: [MovieList]?)-> Void) {
         let url = "https://yts.mx/api/v2/list_movies.json?page=\(page)"
         Alamofire.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: nil) .responseJSON { response in
@@ -25,18 +22,17 @@ class Api: NSObject {
                 print(error)
             case .success(let value):
                 let json = JSON(value)
-               // print(json)
+                print(json)
                 
                 guard let dataArr = json["data"]["movies"].array else {
                     completion(nil,nil)
                     return
                 }
                 
-                ()
                 var movies = [MovieList]()
+                
+                
                 for data in dataArr {
-
-
                     guard let data = data.dictionary else {return}
                     let movie = MovieList()
                     movie.id = data["id"]?.int ?? 0
@@ -55,7 +51,55 @@ class Api: NSObject {
                     movie.imgURL = data["small_cover_image"]?.string ?? ""
                     movie.rate = data["rating"]?.float ?? 0
                     
+                    movie.moviesCount = json["data"]["movie_count"].int
 
+                    movies.append(movie)
+                }
+                completion(nil,movies)
+            }
+        }
+    }
+    class func filterMovies(page: Int,quality: String,rating: Int,query: String,genre: String,sortBy: String,orderBy: String,completion: @escaping (_ error: Error?, _ movies: [MovieList]?)-> Void) {
+        let url = "https://yts.mx/api/v2/list_movies.json?quality=\(quality)&minimum_rating=\(rating)&query_term=\(query)&genre=\(genre)&sort_by=\(sortBy)&order_by=\(orderBy)"
+        Alamofire.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: nil) .responseJSON { response in
+            
+            switch response.result {
+            case .failure(let error):
+                completion(error, nil)
+                print(error)
+            case .success(let value):
+                let json = JSON(value)
+                //print(json)
+                
+                guard let dataArr = json["data"]["movies"].array else {
+                    completion(nil,nil)
+                    return
+                }
+                
+                var movies = [MovieList]()
+                
+                
+                for data in dataArr {
+                    guard let data = data.dictionary else {return}
+                    let movie = MovieList()
+                    movie.id = data["id"]?.int ?? 0
+                    
+                    movie.title = data["title"]?.string ?? ""
+                    movie.titleLong = data["title_long"]?.string ?? ""
+                    
+                    let genresJson = data["genres"]?.arrayValue
+                    var genres: [String] = [String]()
+                    for genre in genresJson! {
+                        genres.append(genre.stringValue)
+                    }
+                    
+                    movie.genres = genres
+                    
+                    movie.imgURL = data["small_cover_image"]?.string ?? ""
+                    movie.rate = data["rating"]?.float ?? 0
+                    
+                    movie.moviesCount = json["data"]["movie_count"].int
+                    
                     movies.append(movie)
                 }
                 completion(nil,movies)
@@ -72,7 +116,7 @@ class Api: NSObject {
                 print(error)
             case .success(let value):
                 let json = JSON(value)
-                // print(json)
+                 print(json)
                 
                 guard let dataArr = json["data"]["movies"].array else {
                     completion(nil,nil)
@@ -108,7 +152,6 @@ class Api: NSObject {
     }
     
     class func movieDetails(movieID: Int,completion: @escaping (_ error: Error?, _ movies: MovieDetails?)-> Void) {
-        
         
         let url = "https://yts.mx/api/v2/movie_details.json?movie_id=\(movieID)&with_images=true&with_cast=true"
         Alamofire.request(url, method: .get, parameters: nil, encoding: URLEncoding.default, headers: nil) .responseJSON { response in

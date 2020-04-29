@@ -66,6 +66,8 @@ class FilterSearchVC: UIViewController {
         movieGenrePicker.delegate = self
         movieGenrePicker.dataSource = self
         
+        
+        
         movieGenreTextField.inputView = movieGenrePicker
         
         self.filterBTN.layer.cornerRadius = self.filterBTN.frame.height / 2
@@ -120,7 +122,6 @@ class FilterSearchVC: UIViewController {
     
     @IBAction func filterBTN(_ sender: UIButton) {
         if delegate != nil {
-            
             let query: String = self.movieTitleTextField.text ?? "" == "" ? "0" : self.movieTitleTextField.text!
             let genre: String = self.movieGenreTextField.text ?? "" == "" ? "All" : self.movieGenreTextField.text!
             let minRate: Int = Int(self.minimumRatingLabel.text ?? "0") ?? 0
@@ -128,14 +129,18 @@ class FilterSearchVC: UIViewController {
             // pass the filter data to the delegate
             delegate?.userDidApplySomeFilter(query: query, genre: genre.lowercased(), minRate: minRate, quality: self.movieQuality, sortBy: self.sortByOptionsisSelected.replacingOccurrences(of: " ", with: "_"), orderBy: self.moviesOrderBy)
             
-            dismiss(animated: true, completion: nil)
+            self.dismiss(animated: true, completion: nil)
         }
-        
-        
     }
 }
 
-extension FilterSearchVC: UICollectionViewDelegate, UICollectionViewDataSource,UITextFieldDelegate,UIPickerViewDelegate, UIPickerViewDataSource {
+extension FilterSearchVC: UITextFieldDelegate ,UICollectionViewDelegate, UICollectionViewDataSource,UIPickerViewDelegate, UIPickerViewDataSource {
+    
+    func textFieldShouldClear(_ textField: UITextField) -> Bool {
+        
+        textField.resignFirstResponder()
+        return true
+    }
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
