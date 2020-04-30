@@ -45,8 +45,8 @@ class MovieDetailsVC: UIViewController {
         
         hundleRefrech()
         
-        
-        
+        addImageViewIntoScrollView()
+        saveMovieImage()
         
     }
     

@@ -22,7 +22,7 @@ class Api: NSObject {
                 print(error)
             case .success(let value):
                 let json = JSON(value)
-                print(json)
+                //print(json)
                 
                 guard let dataArr = json["data"]["movies"].array else {
                     completion(nil,nil)
@@ -116,7 +116,7 @@ class Api: NSObject {
                 print(error)
             case .success(let value):
                 let json = JSON(value)
-                 print(json)
+                 //print(json)
                 
                 guard let dataArr = json["data"]["movies"].array else {
                     completion(nil,nil)

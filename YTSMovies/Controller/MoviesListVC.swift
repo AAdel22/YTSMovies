@@ -28,7 +28,7 @@ class MoviesListVC: UIViewController,DataSentByDelegate{
         
     private var refreshController:UIRefreshControl = UIRefreshControl()
     
-    var currentResponseMoviesCount = 0
+    
     
     // the filter Var
     private var filterQuery: String = "0"
@@ -48,7 +48,7 @@ class MoviesListVC: UIViewController,DataSentByDelegate{
         let navBarFilterButton = UIBarButtonItem(image: #imageLiteral(resourceName: "filter"), style: .done, target: self, action: #selector(showFilterView))
         
         self.navigationItem.rightBarButtonItem = navBarFilterButton
-        filterMovies()
+        //filterMovies()
         allMovies()
         refreshController.addTarget(self, action: #selector(refreachTableView), for: UIControlEvents.valueChanged)
         self.tableView.refreshControl = refreshController
@@ -64,8 +64,7 @@ class MoviesListVC: UIViewController,DataSentByDelegate{
         Api.allMovies(page: pageNumber) { (error: Error?, movies: [MovieList]?) in
             if let movies = movies {
                 self.movies = movies
-                let movie = MovieList()
-                self.currentResponseMoviesCount = movie.moviesCount ?? 0
+                self.tableViewIsForDisplay = .list
                 self.tableView.reloadData()
                 self.pageNumber+=1
             }
@@ -78,9 +77,7 @@ class MoviesListVC: UIViewController,DataSentByDelegate{
         Api.searchMovies(page: pageNumber, query: searchQuery) { (error: Error?, movies: [MovieList]?) in
             if let movies = movies {
                 self.movies = movies
-                let movie = MovieList()
-                self.currentResponseMoviesCount = movie.moviesCount ?? 0
-                
+                self.tableViewIsForDisplay = .search
                 self.tableView.reloadData()
             }
         }
@@ -115,7 +112,7 @@ class MoviesListVC: UIViewController,DataSentByDelegate{
         self.tableViewIsForDisplay = .list
         self.movieSearchBar.text = nil
         
-        self.allMovies()
+        //self.searchMovies()
         self.refreshController.endRefreshing()
     }
 }
@@ -150,7 +147,6 @@ extension MoviesListVC: UISearchBarDelegate,UITableViewDataSource,UITableViewDel
         return 200
     }
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if (self.movies.count - 1 == indexPath.row) && (self.movies.count < self.currentResponseMoviesCount) {
             if tableViewIsForDisplay == .list {
                 allMovies()
             } else if tableViewIsForDisplay == .search {
@@ -158,7 +154,6 @@ extension MoviesListVC: UISearchBarDelegate,UITableViewDataSource,UITableViewDel
             } else if tableViewIsForDisplay == .filter {
                 filterMovies()
             }
-        }
     }
     // func to show MovieDetails And pass MovieID
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
